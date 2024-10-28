@@ -35,8 +35,8 @@ def abrir():
         texto.insert("insert", contenido) # Inserta el contenido del fichero
         fichero.close() # Cierra el fichero
         root.title(ruta + "- Editor de texto") # Cambia el titlo de la ventana
-    else: 
-        guardar_como()
+
+        # Eliminé un else que hacía que abriera de nueva una ventana con los archivos cuando la cerrabas al usar esta función *Mejora
 
 def guardar(): 
     lower_text.set("Guardar fichero")
@@ -49,6 +49,11 @@ def guardar():
         fichero.write(contenido) # Escribir texto en el fichero
         fichero.close() # Cerrar el fichero
         lower_text.set("Guardado correctamente") # Modificamos el mensaje del pie
+    
+    # Agregué este else ya que no tiene una forma de guardar por primera vez,
+    # y es necesaria para que se pueda crear un primer guardado *Mejora
+    else:
+        guardar_como()
 
 def guardar_como():
     lower_text.set("Guardar como")
@@ -56,9 +61,14 @@ def guardar_como():
     global ruta
 
     fichero = FileDialog.asksaveasfile(title="Guardar como", mode="w", defaultextension=".txt") 
-    ruta = fichero.name #la ruta donde se guardara el fichero
+
 
     if fichero is not None: 
+        '''La expresion (ruta = fichero.name) la coloqué dentro de este if porque si la dejas afuera
+        y no seleccionas una ruta o nombre de un fichero al que quieres acceder, es decir, cancelas
+        el guardado, la variable fichero.name intentará acceder al nombre de la ruta pero al no existir crea un error
+        de excepcion de tipo Nonetype'''
+        ruta = fichero.name #la ruta donde se guardara el fichero debe estar dentro de este if statement *Mejora
         contenido = texto.get(1.0, "end") # Capturamos el texto
         fichero = open(ruta, 'w+') # creamos el fichero
         fichero.write(contenido) # Escribir texto en el fichero
@@ -109,8 +119,8 @@ archive.add_command(label="Nuevo", command=nuevo)
 archive.add_command(label="Abrir", command=abrir)
 archive.add_command(label="Guardar", command= guardar)
 archive.add_command(label="Guardar Como", command=guardar_como)
+archive.add_separator() # Este metodo inserta una línea de separacion entre Guardado Como y Cerrar * Mejora
 archive.add_command(label="Cerrar", command=exit)
-
 
 help = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Ayuda", menu=help)
